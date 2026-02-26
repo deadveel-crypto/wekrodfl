@@ -5,11 +5,11 @@
 // Конфигурация
 const CONFIG = {
     // Замените на ваш API токен CryptoBot (получить: @CryptoBot -> Crypto Pay -> Create App)
-    CRYPTO_BOT_TOKEN: 'YOUR_CRYPTO_BOT_TOKEN',
+    CRYPTO_BOT_TOKEN: '538992:AAMmXcxfIIMfWfJedEGAumtE6zJ0bFufOzu',
     // URL вашего бэкенда для создания инвойсов
     BACKEND_URL: 'https://your-backend.com/api',
     // ID вашего бота для Stars
-    BOT_USERNAME: 'your_bot_username'
+    BOT_USERNAME: 'erjguierjh9g34jgbot'
 };
 
 // Mock Telegram WebApp for local testing
@@ -638,3 +638,4 @@ document.getElementById('backBtn').addEventListener('click', function() {
 window.removeFromCart = removeFromCart;
 
 console.log('Script loaded!');
+
