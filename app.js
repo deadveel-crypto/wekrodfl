@@ -2,17 +2,26 @@
 // SPDTER Shop - Telegram Mini App
 // ========================================
 
-// Проверка Telegram WebApp
+// Конфигурация
+const CONFIG = {
+    // Замените на ваш API токен CryptoBot (получить: @CryptoBot -> Crypto Pay -> Create App)
+    CRYPTO_BOT_TOKEN: 'YOUR_CRYPTO_BOT_TOKEN',
+    // URL вашего бэкенда для создания инвойсов
+    BACKEND_URL: 'https://your-backend.com/api',
+    // ID вашего бота для Stars
+    BOT_USERNAME: 'your_bot_username'
+};
+
+// Mock Telegram WebApp for local testing
 if (!window.Telegram || !window.Telegram.WebApp) {
     window.Telegram = {
         WebApp: {
             ready: function() {},
             expand: function() {},
+            enableClosingConfirmation: function() {},
             close: function() { console.log('App closed'); },
-            sendData: function(data) { 
-                console.log('sendData:', data);
-                alert('Данные отправлены боту: ' + data);
-            },
+            colorScheme: 'dark',
+            themeParams: {},
             initDataUnsafe: {
                 user: {
                     id: 123456789,
@@ -23,7 +32,22 @@ if (!window.Telegram || !window.Telegram.WebApp) {
             },
             HapticFeedback: {
                 impactOccurred: function() {},
-                notificationOccurred: function() {}
+                notificationOccurred: function() {},
+                selectionChanged: function() {}
+            },
+            BackButton: {
+                onClick: function() {},
+                show: function() {},
+                hide: function() {}
+            },
+            sendData: function(data) { console.log('sendData:', data); },
+            openInvoice: function(url, callback) {
+                console.log('openInvoice:', url);
+                if (callback) callback('paid');
+            },
+            openTelegramLink: function(url) {
+                console.log('openTelegramLink:', url);
+                window.open(url, '_blank');
             }
         }
     };
@@ -31,60 +55,83 @@ if (!window.Telegram || !window.Telegram.WebApp) {
 }
 
 const tg = window.Telegram.WebApp;
-tg.ready();
 tg.expand();
 
-// ========================================
-// ДАННЫЕ ТОВАРОВ
-// ========================================
+// Product Data
 const products = {
     1: {
         id: 1,
         icon: '💀',
         title: 'ULTIMATE + STAND HELPER',
-        subtitle: 'Лучший эмулятор для SO2!',
+        subtitle: 'Лучший на данный момент эмулятор для игры в Standoff 2!',
         price: 1999,
         oldPrice: 3000,
-        description: `ULTIMATE + STAND HELPER
+        description: `ULTIMATE + STAND HELPER - ЛУЧШИЙ ЭМУЛЯТОР ДЛЯ КИБЕРСПОРТИВНОЙ ИГРЫ!
+
+СЕНСА КАК В КС! НЕ ПРИВЯЗАНА К ГЕРЦОВКЕ МОНИТОРА!
+
+В настройку входит:
 
 • 4K RTX Графика
 • Идеальная сенса
+• Уменьшение отдачи
+• Уменьшение тряски экрана
 • Stable High FPS (360 UNLOCK)
+• Ускоренная загрузка эмулятора
+• Лучший кфг с хоткеями как в кс
 • Кастомное WHITE оформление
-• Оптимизация Windows`
+• Оптимизация драйверов Windows
+• PowerCFG, безопасно разгоняющий пк
+• Оптимизация Windows (По выбору)
+
+После покупки вы получаете инструкции по установке`
     },
     2: {
         id: 2,
         icon: '💻',
         title: 'SPDBLUE - Settings SO2',
-        subtitle: 'Идеальный кастом!',
+        subtitle: 'Идеальный кастом по соотношению цена/качество!',
         price: 699,
         oldPrice: 1000,
-        description: `SPDBLUE - Эмулятор без вылетов!
+        description: `SPDBLUE - Эмулятор для стабильной игры, без вылетов!
+
+В настройку входит:
 
 • Стабильный фпс
 • Улучшенная сенса
-• Плавная картинка
-• Кастомное оформление`
+• Плавная картинка при игре
+• Ускоренная загрузка эмулятора
+• Лучший cfg с хоткеями как в кс
+• Кастомное черное оформление
+• Оптимизация драйверов Windows
+• PowerCFG
+• Lite оптимизация Windows
+
+После покупки вы получаете инструкции по установке`
     },
     3: {
         id: 3,
         icon: '⚡',
         title: 'SPD.Lite - Emulator SO2',
-        subtitle: 'Бс БЕЗ ВЫЛЕТОВ!',
+        subtitle: 'Кастомный бс БЕЗ ВЫЛЕТОВ со стабильным фпс!',
         price: 299,
         oldPrice: null,
-        description: `SPDBLUE.lite - Стабильная игра!
+        description: `SPDBLUE.lite - Эмулятор для стабильной игры, без вылетов!
+
+В настройку входит:
 
 • Стабильный фпс
-• Улучшенная сенса
-• Плавная картинка`
+• Сенса лучше, чем в бс 5, LD player
+• Плавная картинка при игре
+• Кастомное черное оформление
+
+После покупки вы получаете инструкции по установке!`
     },
     4: {
         id: 4,
         icon: 'ITSU',
         title: 'Инвайт в клан ITSU',
-        subtitle: 'Элитный клан SO2!',
+        subtitle: 'Элитный клан для настоящих профессионалов SO2!',
         price: 299,
         oldPrice: null,
         isClan: true,
@@ -95,19 +142,22 @@ const products = {
         },
         description: `ЭЛИТНЫЙ КЛАН ITSU
 
+Присоединяйся к одному из лучших кланов SO2!
+
 • Топ клан сервера
 • Профессиональные игроки
-• Эксклюзивные привилегии`
+• Обучение от про-игроков
+• Эксклюзивные привилегии
+• Розыгрыши скинов
+• VIP чат и каналы`
     }
 };
 
-// ========================================
-// СОСТОЯНИЕ
-// ========================================
+// State
 let cart = [];
 let currentOrderData = null;
 
-// Загрузка корзины
+// Load cart from localStorage
 try {
     const saved = localStorage.getItem('spdter_cart');
     if (saved) cart = JSON.parse(saved);
@@ -115,10 +165,10 @@ try {
     cart = [];
 }
 
-// ========================================
-// ИНИЦИАЛИЗАЦИЯ
-// ========================================
+// DOM Ready
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing...');
+    
     initUser();
     initTabs();
     initProducts();
@@ -127,15 +177,15 @@ document.addEventListener('DOMContentLoaded', function() {
     initCrypto();
     initDurationSelectors();
     updateCartBadge();
+    
+    console.log('App initialized!');
 });
 
-// ========================================
-// ПОЛЬЗОВАТЕЛЬ
-// ========================================
+// User
 function initUser() {
-    const user = tg.initDataUnsafe && tg.initDataUnsafe.user;
-    const profileName = document.getElementById('profileName');
-    const avatarImg = document.getElementById('avatarImg');
+    var user = tg.initDataUnsafe && tg.initDataUnsafe.user;
+    var profileName = document.getElementById('profileName');
+    var avatarImg = document.getElementById('avatarImg');
     
     if (user) {
         profileName.textContent = user.first_name + (user.last_name ? ' ' + user.last_name : '');
@@ -145,19 +195,24 @@ function initUser() {
         avatarImg.src = 'https://ui-avatars.com/api/?name=G&background=00D4AA&color=0A0A0F&size=120&bold=true';
     }
     
-    document.getElementById('ordersCount').textContent = localStorage.getItem('spdter_orders_count') || '0';
+    var ordersCount = document.getElementById('ordersCount');
+    ordersCount.textContent = localStorage.getItem('spdter_orders_count') || '0';
 }
 
-// ========================================
-// ТАБЫ
-// ========================================
+// Tabs
 function initTabs() {
-    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    var tabBtns = document.querySelectorAll('.tab-btn');
+    
+    tabBtns.forEach(function(btn) {
         btn.addEventListener('click', function() {
-            const tabId = this.getAttribute('data-tab');
+            var tabId = this.getAttribute('data-tab');
             
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(function(b) {
+                b.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-content').forEach(function(c) {
+                c.classList.remove('active');
+            });
             
             this.classList.add('active');
             document.getElementById(tabId + '-tab').classList.add('active');
@@ -165,15 +220,14 @@ function initTabs() {
     });
 }
 
-// ========================================
-// ТОВАРЫ
-// ========================================
+// Products
 function initProducts() {
     document.querySelectorAll('.btn-details').forEach(function(btn) {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            openProductModal(this.getAttribute('data-product-id'));
+            var productId = this.getAttribute('data-product-id');
+            openProductModal(productId);
         });
     });
     
@@ -181,32 +235,34 @@ function initProducts() {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            addToCart(this.getAttribute('data-product-id'));
+            var productId = this.getAttribute('data-product-id');
+            addToCart(productId);
         });
     });
 }
 
+// Duration selectors
 function initDurationSelectors() {
-    document.querySelectorAll('input[name="duration-4"]').forEach(function(radio) {
+    var radios = document.querySelectorAll('input[name="duration-4"]');
+    radios.forEach(function(radio) {
         radio.addEventListener('change', function() {
-            const price = products[4].durations[this.value].price;
+            var duration = this.value;
+            var price = products[4].durations[duration].price;
             document.getElementById('clanPrice').textContent = price + ' ₽';
         });
     });
 }
 
-// ========================================
-// МОДАЛКА ТОВАРА
-// ========================================
+// Product Modal
 function openProductModal(productId) {
-    const product = products[productId];
+    var product = products[productId];
     if (!product) return;
     
     document.getElementById('modalIcon').textContent = product.icon;
     document.getElementById('modalTitle').textContent = product.title;
     document.getElementById('modalPriceCurrent').textContent = product.price + ' ₽';
     
-    const priceOld = document.getElementById('modalPriceOld');
+    var priceOld = document.getElementById('modalPriceOld');
     if (product.oldPrice) {
         priceOld.textContent = product.oldPrice + ' ₽';
         priceOld.style.display = 'inline';
@@ -230,11 +286,12 @@ function closeProductModal() {
     document.body.style.overflow = '';
 }
 
-// ========================================
-// КОРЗИНА
-// ========================================
+// Cart
 function initCart() {
-    document.getElementById('cartBtn').addEventListener('click', openCartModal);
+    document.getElementById('cartBtn').addEventListener('click', function() {
+        openCartModal();
+    });
+    
     document.getElementById('cartModalClose').addEventListener('click', closeCartModal);
     document.getElementById('modalClose').addEventListener('click', closeProductModal);
     
@@ -246,7 +303,9 @@ function initCart() {
         if (e.target === this) closeProductModal();
     });
     
-    document.getElementById('checkoutBtn').addEventListener('click', openPaymentModal);
+    document.getElementById('checkoutBtn').addEventListener('click', function() {
+        openPaymentModal();
+    });
 }
 
 function openCartModal() {
@@ -261,15 +320,15 @@ function closeCartModal() {
 }
 
 function addToCart(productId) {
-    const product = products[productId];
+    var product = products[productId];
     if (!product) return;
     
-    let price = product.price;
-    let duration = null;
-    let durationName = null;
+    var price = product.price;
+    var duration = null;
+    var durationName = null;
     
     if (product.isClan) {
-        const selected = document.querySelector('input[name="duration-' + productId + '"]:checked');
+        var selected = document.querySelector('input[name="duration-' + productId + '"]:checked');
         if (selected) {
             duration = selected.value;
             price = product.durations[duration].price;
@@ -297,7 +356,9 @@ function addToCart(productId) {
 }
 
 function removeFromCart(itemId) {
-    cart = cart.filter(item => item.id !== itemId);
+    cart = cart.filter(function(item) {
+        return item.id !== itemId;
+    });
     saveCart();
     updateCartBadge();
     renderCart();
@@ -308,16 +369,20 @@ function saveCart() {
 }
 
 function updateCartBadge() {
-    const badge = document.getElementById('cartBadge');
+    var badge = document.getElementById('cartBadge');
     badge.textContent = cart.length;
-    badge.classList.toggle('visible', cart.length > 0);
+    if (cart.length > 0) {
+        badge.classList.add('visible');
+    } else {
+        badge.classList.remove('visible');
+    }
 }
 
 function renderCart() {
-    const cartItems = document.getElementById('cartItems');
-    const cartEmpty = document.getElementById('cartEmpty');
-    const cartFooter = document.getElementById('cartFooter');
-    const cartTotal = document.getElementById('cartTotal');
+    var cartItems = document.getElementById('cartItems');
+    var cartEmpty = document.getElementById('cartEmpty');
+    var cartFooter = document.getElementById('cartFooter');
+    var cartTotal = document.getElementById('cartTotal');
     
     if (cart.length === 0) {
         cartItems.innerHTML = '';
@@ -329,26 +394,24 @@ function renderCart() {
     cartEmpty.classList.remove('visible');
     cartFooter.classList.remove('hidden');
     
-    let total = 0;
-    let html = '';
+    var total = 0;
+    var html = '';
     
     cart.forEach(function(item) {
         total += item.price;
-        html += `
-            <div class="cart-item">
-                <div class="cart-item-icon">${item.icon}</div>
-                <div class="cart-item-info">
-                    <div class="cart-item-name">${item.title}</div>
-                    <div class="cart-item-price">${item.price} ₽</div>
-                    ${item.durationName ? `<div class="cart-item-duration">${item.durationName}</div>` : ''}
-                </div>
-                <button class="cart-item-remove" onclick="removeFromCart(${item.id})">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                </button>
-            </div>
-        `;
+        html += '<div class="cart-item">' +
+            '<div class="cart-item-icon">' + item.icon + '</div>' +
+            '<div class="cart-item-info">' +
+                '<div class="cart-item-name">' + item.title + '</div>' +
+                '<div class="cart-item-price">' + item.price + ' ₽</div>' +
+                (item.durationName ? '<div class="cart-item-duration">' + item.durationName + '</div>' : '') +
+            '</div>' +
+            '<button class="cart-item-remove" onclick="removeFromCart(' + item.id + ')">' +
+                '<svg width="18" height="18" viewBox="0 0 24 24" fill="none">' +
+                    '<path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' +
+                '</svg>' +
+            '</button>' +
+        '</div>';
     });
     
     cartItems.innerHTML = html;
@@ -356,12 +419,14 @@ function renderCart() {
 }
 
 function getCartTotal() {
-    return cart.reduce((sum, item) => sum + item.price, 0);
+    var total = 0;
+    cart.forEach(function(item) {
+        total += item.price;
+    });
+    return total;
 }
 
-// ========================================
-// ОПЛАТА
-// ========================================
+// Payment
 function initPayment() {
     document.getElementById('paymentModalClose').addEventListener('click', closePaymentModal);
     
@@ -375,12 +440,16 @@ function initPayment() {
     });
     
     // Telegram Stars
-    document.getElementById('payTelegramStars').addEventListener('click', payWithStars);
+    document.getElementById('payTelegramStars').addEventListener('click', function() {
+        payWithTelegramStars();
+    });
     
     // Crypto Bot
-    document.getElementById('payCryptoBot').addEventListener('click', openCryptoModal);
+    document.getElementById('payCryptoBot').addEventListener('click', function() {
+        openCryptoModal();
+    });
     
-    // СБП (недоступно)
+    // SBP (disabled)
     document.getElementById('paySBP').addEventListener('click', function() {
         showToast('Временно недоступно');
     });
@@ -389,20 +458,15 @@ function initPayment() {
 function openPaymentModal() {
     if (cart.length === 0) return;
     
-    const total = getCartTotal();
+    var total = getCartTotal();
     document.getElementById('paymentAmount').textContent = total + ' ₽';
     
     // Сохраняем данные заказа
     currentOrderData = {
-        order_id: 'ORD-' + Date.now(),
-        items: cart.map(item => ({
-            productId: item.productId,
-            title: item.title,
-            price: item.price,
-            duration: item.duration
-        })),
-        total_rub: total,
-        created_at: new Date().toISOString()
+        items: cart.slice(),
+        total: total,
+        date: new Date().toISOString(),
+        orderId: 'ORD-' + Date.now()
     };
     
     closeCartModal();
@@ -416,46 +480,39 @@ function closePaymentModal() {
 }
 
 // ========================================
-// ОПЛАТА TELEGRAM STARS
+// TELEGRAM STARS PAYMENT
 // ========================================
-function payWithStars() {
+function payWithTelegramStars() {
     if (!currentOrderData) return;
     
     showToast('Создаём счёт...');
     
-    // Конвертация RUB в Stars (примерно 1 Star ≈ 1.3-1.5 RUB)
-    const starsAmount = Math.ceil(currentOrderData.total_rub / 1.3);
+    // Цена в Stars (примерно 1.3 RUB = 1 Star)
+    const starsAmount = Math.ceil(currentOrderData.total / 1.3);
     
-    // Отправляем данные боту
-    const paymentData = {
-        action: 'pay_stars',
-        order_id: currentOrderData.order_id,
-        items: currentOrderData.items,
+    // Формируем данные В ФОРМАТЕ, КОТОРЫЙ ОЖИДАЕТ БОТ
+    const dataToSend = {
+        action: 'pay_stars',  // ← ИСПРАВЛЕНО: было 'create_stars_invoice'
+        order_id: currentOrderData.orderId,
+        items: currentOrderData.items.map(item => ({
+            productId: item.productId,
+            title: item.title,
+            price: item.price,
+            duration: item.duration
+        })),
         stars_amount: starsAmount,
-        total_rub: currentOrderData.total_rub
+        total_rub: currentOrderData.total
     };
     
-    console.log('Отправка данных боту:', paymentData);
+    console.log('Sending Stars data:', dataToSend);
     
-    // Отправляем через Telegram WebApp
-    tg.sendData(JSON.stringify(paymentData));
+    // Отправляем данные боту
+    tg.sendData(JSON.stringify(dataToSend));
     
-    // Очищаем корзину
-    cart = [];
-    saveCart();
-    updateCartBadge();
-    
-    closePaymentModal();
-    showToast('Счёт отправлен в чат!');
-    
-    // Закрываем Mini App через 1.5 сек
-    setTimeout(function() {
-        tg.close();
-    }, 1500);
+    // Mini App закроется автоматически после sendData
 }
-
 // ========================================
-// ОПЛАТА CRYPTO
+// CRYPTO BOT PAYMENT
 // ========================================
 function initCrypto() {
     document.getElementById('cryptoModalClose').addEventListener('click', closeCryptoModal);
@@ -469,10 +526,11 @@ function initCrypto() {
         openPaymentModal();
     });
     
-    // Обработчики выбора криптовалюты
+    // Обработчики для выбора крипты
     document.querySelectorAll('.crypto-option').forEach(function(btn) {
         btn.addEventListener('click', function() {
-            payWithCrypto(this.getAttribute('data-crypto'));
+            var crypto = this.getAttribute('data-crypto');
+            payWithCrypto(crypto);
         });
     });
 }
@@ -488,48 +546,71 @@ function closeCryptoModal() {
     document.body.style.overflow = '';
 }
 
-function payWithCrypto(asset) {
+function payWithCrypto(cryptoAsset) {
     if (!currentOrderData) return;
     
-    showToast('Создаём счёт ' + asset + '...');
+    showToast('Создаём счёт ' + cryptoAsset + '...');
     
-    // Конвертация RUB в USD (примерно 1 USD ≈ 90-95 RUB)
-    const amountUSD = (currentOrderData.total_rub / 92).toFixed(2);
+    // Конвертация RUB в USD (примерно 90 RUB = 1 USD)
+    const amountUSD = (currentOrderData.total / 90).toFixed(2);
     
-    // Отправляем данные боту
-    const paymentData = {
-        action: 'pay_crypto',
-        order_id: currentOrderData.order_id,
-        items: currentOrderData.items,
+    // Формируем данные В ФОРМАТЕ, КОТОРЫЙ ОЖИДАЕТ БОТ
+    const dataToSend = {
+        action: 'pay_crypto',  // ← ИСПРАВЛЕНО: было 'create_crypto_invoice'
+        order_id: currentOrderData.orderId,
+        items: currentOrderData.items.map(item => ({
+            productId: item.productId,
+            title: item.title,
+            price: item.price,
+            duration: item.duration
+        })),
         amount: amountUSD,
-        asset: asset,
-        total_rub: currentOrderData.total_rub
+        asset: cryptoAsset,
+        total_rub: currentOrderData.total
     };
     
-    console.log('Отправка данных боту:', paymentData);
+    console.log('Sending Crypto data:', dataToSend);
     
-    // Отправляем через Telegram WebApp
-    tg.sendData(JSON.stringify(paymentData));
+    // Отправляем данные боту
+    tg.sendData(JSON.stringify(dataToSend));
     
-    // Очищаем корзину
+    // Mini App закроется автоматически после sendData
+}
+// ========================================
+// ORDER COMPLETION
+// ========================================
+function completeOrder(method) {
+    if (!currentOrderData) return;
+    
+    currentOrderData.method = method;
+    
+    var orders = [];
+    try {
+        var saved = localStorage.getItem('spdter_orders');
+        if (saved) orders = JSON.parse(saved);
+    } catch (e) {}
+    
+    orders.push(currentOrderData);
+    localStorage.setItem('spdter_orders', JSON.stringify(orders));
+    localStorage.setItem('spdter_orders_count', orders.length.toString());
+    
     cart = [];
     saveCart();
     updateCartBadge();
     
-    closeCryptoModal();
-    showToast('Счёт отправлен в чат!');
+    document.getElementById('ordersCount').textContent = orders.length;
+    showToast('Заказ #' + currentOrderData.orderId + ' оформлен!');
     
-    // Закрываем Mini App через 1.5 сек
-    setTimeout(function() {
-        tg.close();
-    }, 1500);
+    currentOrderData = null;
+    
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.notificationOccurred('success');
+    }
 }
 
-// ========================================
-// TOAST УВЕДОМЛЕНИЕ
-// ========================================
+// Toast
 function showToast(message) {
-    const toast = document.getElementById('toast');
+    var toast = document.getElementById('toast');
     document.getElementById('toastMessage').textContent = message;
     toast.classList.add('visible');
     
@@ -538,9 +619,7 @@ function showToast(message) {
     }, 3000);
 }
 
-// ========================================
-// КНОПКА НАЗАД
-// ========================================
+// Back button
 document.getElementById('backBtn').addEventListener('click', function() {
     if (document.getElementById('cryptoModal').classList.contains('active')) {
         closeCryptoModal();
@@ -555,7 +634,7 @@ document.getElementById('backBtn').addEventListener('click', function() {
     }
 });
 
-// Глобальная функция для удаления из корзины
+// Make removeFromCart global
 window.removeFromCart = removeFromCart;
 
-console.log('SPDTER Shop loaded!');
+console.log('Script loaded!');
