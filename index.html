@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SPDTER Shop</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Animated Background -->
+        <div class="background-effects">
+            <div class="glow-orb orb-1"></div>
+            <div class="glow-orb orb-2"></div>
+        </div>
+
+        <!-- Header -->
+        <header class="header glass-effect">
+            <button class="header-btn" id="backBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <div class="header-title">
+                <span class="logo-text">SPDTER</span>
+                <span class="logo-sub">SHOP</span>
+            </div>
+            <button class="header-btn" id="cartBtn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M9 22C9.55228 22 10 21.5523 10 21C10 20.4477 9.55228 20 9 20C8.44772 20 8 20.4477 8 21C8 21.5523 8.44772 22 9 22Z" stroke="currentColor" stroke-width="2"/>
+                    <path d="M20 22C20.5523 22 21 21.5523 21 21C21 20.4477 20.5523 20 20 20C19.4477 20 19 20.4477 19 21C19 21.5523 19.4477 22 20 22Z" stroke="currentColor" stroke-width="2"/>
+                    <path d="M1 1H5L7.68 14.39C7.77144 14.8504 8.02191 15.264 8.38755 15.5583C8.75318 15.8526 9.2107 16.009 9.68 16H19.4C19.8693 16.009 20.3268 15.8526 20.6925 15.5583C21.0581 15.264 21.3086 14.8504 21.4 14.39L23 6H6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="cart-badge" id="cartBadge">0</span>
+            </button>
+        </header>
+
+        <!-- User Profile -->
+        <section class="profile-section glass-card">
+            <div class="profile-avatar" id="profileAvatar">
+                <img src="" alt="Avatar" id="avatarImg">
+                <div class="avatar-glow"></div>
+            </div>
+            <div class="profile-info">
+                <h2 class="profile-name" id="profileName">Загрузка...</h2>
+                <p class="profile-status">Premium</p>
+            </div>
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="ordersCount">0</span>
+                    <span class="stat-label">заказов</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab Navigation -->
+        <nav class="tab-navigation glass-effect">
+            <button class="tab-btn active" data-tab="bluestacks">
+                <span class="tab-text">Настройки BlueStacks</span>
+            </button>
+            <button class="tab-btn" data-tab="clan">
+                <span class="tab-text">Клан</span>
+            </button>
+        </nav>
+
+        <!-- Products Container -->
+        <main class="products-container">
+            <!-- BlueStacks Tab -->
+            <section class="tab-content active" id="bluestacks-tab">
+                <!-- Product 1: ULTIMATE + STAND HELPER -->
+                <article class="product-card glass-card" data-product-id="1">
+                    <div class="product-badges">
+                        <span class="badge badge-sale">-33%</span>
+                    </div>
+                    <div class="product-icon">
+                        <div class="icon-shape skull"></div>
+                        <div class="icon-glow"></div>
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-title">ULTIMATE + STAND HELPER</h3>
+                        <p class="product-subtitle">Лучший на данный момент эмулятор для игры в Standoff 2!</p>
+                        <div class="product-price">
+                            <span class="price-current">1999 ₽</span>
+                            <span class="price-old">3000 ₽</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-details" data-product-id="1">Подробнее</button>
+                            <button class="btn-cart" data-product-id="1">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Product 2: SPDBLUE -->
+                <article class="product-card glass-card" data-product-id="2">
+                    <div class="product-badges">
+                        <span class="badge badge-sale">-30%</span>
+                    </div>
+                    <div class="product-icon">
+                        <div class="icon-shape laptop"></div>
+                        <div class="icon-glow blue"></div>
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-title">SPDBLUE - Settings SO2</h3>
+                        <p class="product-subtitle">Идеальный кастом по соотношению цена/качество!</p>
+                        <div class="product-price">
+                            <span class="price-current">699 ₽</span>
+                            <span class="price-old">1000 ₽</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-details" data-product-id="2">Подробнее</button>
+                            <button class="btn-cart" data-product-id="2">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Product 3: SPD.Lite -->
+                <article class="product-card glass-card" data-product-id="3">
+                    <div class="product-icon">
+                        <div class="icon-shape lite"></div>
+                        <div class="icon-glow purple"></div>
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-title">SPD.Lite - Emulator SO2</h3>
+                        <p class="product-subtitle">Кастомный бс БЕЗ ВЫЛЕТОВ со стабильным фпс!</p>
+                        <div class="product-price">
+                            <span class="price-current">299 ₽</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-details" data-product-id="3">Подробнее</button>
+                            <button class="btn-cart" data-product-id="3">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                    <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            </section>
+
+            <!-- Clan Tab -->
+            <section class="tab-content" id="clan-tab">
+                <!-- ITSU Clan Invite -->
+                <article class="product-card glass-card clan-card" data-product-id="4">
+                    <div class="product-badges">
+                        <span class="badge badge-exclusive">EXCLUSIVE</span>
+                    </div>
+                    <div class="product-icon itsu-icon">
+                        <div class="itsu-logo">ITSU</div>
+                        <div class="icon-glow cyan"></div>
+                    </div>
+                    <div class="product-content">
+                        <h3 class="product-title">Инвайт в клан ITSU</h3>
+                        <p class="product-subtitle">Элитный клан для настоящих профессионалов SO2!</p>
+                        
+                        <div class="duration-selector">
+                            <label class="duration-option">
+                                <input type="radio" name="duration-4" value="week" checked>
+                                <span class="duration-label">
+                                    <span class="duration-name">Неделя</span>
+                                    <span class="duration-price">299 ₽</span>
+                                </span>
+                            </label>
+                            <label class="duration-option">
+                                <input type="radio" name="duration-4" value="month">
+                                <span class="duration-label">
+                                    <span class="duration-name">Месяц</span>
+                                    <span class="duration-price">499 ₽</span>
+                                </span>
+                            </label>
+                            <label class="duration-option">
+                                <input type="radio" name="duration-4" value="forever">
+                                <span class="duration-label">
+                                    <span class="duration-name">Навсегда</span>
+                                    <span class="duration-price">1499 ₽</span>
+                                </span>
+                            </label>
+                        </div>
+
+                        <div class="product-price">
+                            <span class="price-current" id="clanPrice">299 ₽</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-details" data-product-id="4">Подробнее</button>
+                            <button class="btn-cart btn-cart-full" data-product-id="4">Добавить в корзину</button>
+                        </div>
+                    </div>
+                </article>
+            </section>
+        </main>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal-content glass-card">
+            <button class="modal-close" id="modalClose">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <div class="modal-header">
+                <div class="modal-icon" id="modalIcon"></div>
+                <h2 class="modal-title" id="modalTitle">Название товара</h2>
+            </div>
+            <div class="modal-body" id="modalBody">
+            </div>
+            <div class="modal-footer">
+                <div class="modal-price">
+                    <span class="price-current" id="modalPriceCurrent">1999 ₽</span>
+                    <span class="price-old" id="modalPriceOld">3000 ₽</span>
+                </div>
+                <button class="btn-buy" id="modalBuyBtn">Купить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div class="modal-overlay" id="cartModal">
+        <div class="modal-content glass-card cart-modal">
+            <button class="modal-close" id="cartModalClose">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <div class="modal-header">
+                <h2 class="modal-title">Корзина</h2>
+            </div>
+            <div class="cart-items" id="cartItems">
+            </div>
+            <div class="cart-empty" id="cartEmpty">
+                <div class="empty-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 22C9.55228 22 10 21.5523 10 21C10 20.4477 9.55228 20 9 20C8.44772 20 8 20.4477 8 21C8 21.5523 8.44772 22 9 22Z" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M20 22C20.5523 22 21 21.5523 21 21C21 20.4477 20.5523 20 20 20C19.4477 20 19 20.4477 19 21C19 21.5523 19.4477 22 20 22Z" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M1 1H5L7.68 14.39C7.77144 14.8504 8.02191 15.264 8.38755 15.5583C8.75318 15.8526 9.2107 16.009 9.68 16H19.4C19.8693 16.009 20.3268 15.8526 20.6925 15.5583C21.0581 15.264 21.3086 14.8504 21.4 14.39L23 6H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <p>Корзина пуста</p>
+            </div>
+            <div class="cart-footer" id="cartFooter">
+                <div class="cart-total">
+                    <span>Итого:</span>
+                    <span class="total-price" id="cartTotal">0 ₽</span>
+                </div>
+                <button class="btn-checkout" id="checkoutBtn">Оформить заказ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal-content glass-card payment-modal">
+            <button class="modal-close" id="paymentModalClose">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <div class="modal-header">
+                <h2 class="modal-title">Выберите способ оплаты</h2>
+            </div>
+            <div class="payment-total">
+                <span>К оплате:</span>
+                <span class="payment-amount" id="paymentAmount">0 ₽</span>
+            </div>
+            <div class="payment-methods">
+                <button class="payment-method" id="payTelegramStars">
+                    <div class="payment-icon stars">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <div class="payment-info">
+                        <span class="payment-name">Telegram Stars</span>
+                        <span class="payment-desc">Оплата звёздами Telegram</span>
+                    </div>
+                    <svg class="payment-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+
+                <button class="payment-method" id="payCryptoBot">
+                    <div class="payment-icon crypto">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                            <path d="M12 6V18M15 9.5C15 8.12 13.66 7 12 7C10.34 7 9 8.12 9 9.5C9 10.88 10.34 12 12 12C13.66 12 15 13.12 15 14.5C15 15.88 13.66 17 12 17C10.34 17 9 15.88 9 14.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="payment-info">
+                        <span class="payment-name">Crypto Bot</span>
+                        <span class="payment-desc">Оплата криптовалютой</span>
+                    </div>
+                    <svg class="payment-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+
+                <button class="payment-method disabled" id="paySBP">
+                    <div class="payment-icon sbp">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+                            <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" stroke-width="2"/>
+                            <path d="M3 10H21" stroke="currentColor" stroke-width="2"/>
+                            <path d="M7 14H10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="payment-info">
+                        <span class="payment-name">СБП</span>
+                        <span class="payment-desc unavailable">Временно недоступно</span>
+                    </div>
+                    <div class="payment-unavailable">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                            <path d="M4.93 4.93L19.07 19.07" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                    </div>
+                </button>
+            </div>
+            <button class="btn-back-to-cart" id="backToCart">Назад к корзине</button>
+        </div>
+    </div>
+
+    <!-- Crypto Selection Modal -->
+    <div class="modal-overlay" id="cryptoModal">
+        <div class="modal-content glass-card crypto-modal">
+            <button class="modal-close" id="cryptoModalClose">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <div class="modal-header">
+                <h2 class="modal-title">Выберите криптовалюту</h2>
+            </div>
+            <div class="crypto-list">
+                <button class="crypto-option" data-crypto="USDT">
+                    <span class="crypto-icon">💵</span>
+                    <span class="crypto-name">USDT</span>
+                </button>
+                <button class="crypto-option" data-crypto="TON">
+                    <span class="crypto-icon">💎</span>
+                    <span class="crypto-name">TON</span>
+                </button>
+                <button class="crypto-option" data-crypto="BTC">
+                    <span class="crypto-icon">₿</span>
+                    <span class="crypto-name">Bitcoin</span>
+                </button>
+                <button class="crypto-option" data-crypto="ETH">
+                    <span class="crypto-icon">⟠</span>
+                    <span class="crypto-name">Ethereum</span>
+                </button>
+                <button class="crypto-option" data-crypto="LTC">
+                    <span class="crypto-icon">Ł</span>
+                    <span class="crypto-name">Litecoin</span>
+                </button>
+                <button class="crypto-option" data-crypto="BNB">
+                    <span class="crypto-icon">🔶</span>
+                    <span class="crypto-name">BNB</span>
+                </button>
+            </div>
+            <button class="btn-back-to-payment" id="backToPayment">Назад</button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="toast-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </span>
+        <span class="toast-message" id="toastMessage">Товар добавлен в корзину</span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
