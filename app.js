@@ -7,7 +7,7 @@ const CONFIG = {
     // Замените на ваш API токен CryptoBot (получить: @CryptoBot -> Crypto Pay -> Create App)
     CRYPTO_BOT_TOKEN: '538992:AAMmXcxfIIMfWfJedEGAumtE6zJ0bFufOzu',
     // URL вашего бэкенда для создания инвойсов
-    BACKEND_URL: 'https://your-backend.com/api',
+    BACKEND_URL: 'https://love333.tw1.su',
     // ID вашего бота для Stars
     BOT_USERNAME: 'erjguierjh9g34jgbot'
 };
@@ -487,30 +487,59 @@ function payWithTelegramStars() {
     
     showToast('Создаём счёт...');
     
-    // Цена в Stars (примерно 1.3 RUB = 1 Star)
-    const starsAmount = Math.ceil(currentOrderData.total / 1.3);
+    // Для работы Stars нужен бэкенд!
+    // Отправляем данные на бэкенд для создания инвойса
     
-    // Формируем данные В ФОРМАТЕ, КОТОРЫЙ ОЖИДАЕТ БОТ
-    const dataToSend = {
-        action: 'pay_stars',  // ← ИСПРАВЛЕНО: было 'create_stars_invoice'
-        order_id: currentOrderData.orderId,
-        items: currentOrderData.items.map(item => ({
-            productId: item.productId,
-            title: item.title,
-            price: item.price,
-            duration: item.duration
-        })),
-        stars_amount: starsAmount,
-        total_rub: currentOrderData.total
+    const invoiceData = {
+        title: 'Заказ SPDTER Shop',
+        description: currentOrderData.items.map(i => i.title).join(', '),
+        payload: JSON.stringify({
+            orderId: currentOrderData.orderId,
+            items: currentOrderData.items.map(i => ({
+                productId: i.productId,
+                duration: i.duration
+            }))
+        }),
+        // Цена в Stars (примерно 1.3 RUB = 1 Star)
+        amount: Math.ceil(currentOrderData.total / 1.3),
+        currency: 'XTR' // Telegram Stars
     };
     
-    console.log('Sending Stars data:', dataToSend);
+    // Вариант 1: Если есть бэкенд - отправляем на него
+    /*
+    fetch(CONFIG.BACKEND_URL + '/create-stars-invoice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(invoiceData)
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.invoiceLink) {
+            tg.openInvoice(data.invoiceLink, function(status) {
+                if (status === 'paid') {
+                    completeOrder('stars');
+                } else if (status === 'cancelled') {
+                    showToast('Оплата отменена');
+                }
+            });
+        }
+    })
+    .catch(err => {
+        showToast('Ошибка создания счёта');
+        console.error(err);
+    });
+    */
     
-    // Отправляем данные боту
-    tg.sendData(JSON.stringify(dataToSend));
+    // Вариант 2: Для демо - отправляем данные боту
+    tg.sendData(JSON.stringify({
+        action: 'create_stars_invoice',
+        ...invoiceData
+    }));
     
-    // Mini App закроется автоматически после sendData
+    showToast('Запрос отправлен боту');
+    closePaymentModal();
 }
+
 // ========================================
 // CRYPTO BOT PAYMENT
 // ========================================
@@ -551,31 +580,56 @@ function payWithCrypto(cryptoAsset) {
     
     showToast('Создаём счёт ' + cryptoAsset + '...');
     
-    // Конвертация RUB в USD (примерно 90 RUB = 1 USD)
+    // Конвертация RUB в USD (примерно)
     const amountUSD = (currentOrderData.total / 90).toFixed(2);
     
-    // Формируем данные В ФОРМАТЕ, КОТОРЫЙ ОЖИДАЕТ БОТ
-    const dataToSend = {
-        action: 'pay_crypto',  // ← ИСПРАВЛЕНО: было 'create_crypto_invoice'
-        order_id: currentOrderData.orderId,
-        items: currentOrderData.items.map(item => ({
-            productId: item.productId,
-            title: item.title,
-            price: item.price,
-            duration: item.duration
-        })),
-        amount: amountUSD,
+    const invoiceData = {
         asset: cryptoAsset,
-        total_rub: currentOrderData.total
+        amount: amountUSD,
+        description: 'Заказ SPDTER Shop #' + currentOrderData.orderId,
+        hidden_message: 'Спасибо за покупку!',
+        paid_btn_name: 'callback',
+        paid_btn_url: 'https://t.me/' + CONFIG.BOT_USERNAME,
+        payload: currentOrderData.orderId,
+        // Время жизни инвойса в секундах (1 час)
+        expires_in: 3600
     };
     
-    console.log('Sending Crypto data:', dataToSend);
+    // Отправляем запрос на бэкенд для создания инвойса CryptoBot
+    /*
+    fetch(CONFIG.BACKEND_URL + '/create-crypto-invoice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(invoiceData)
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.pay_url) {
+            // Открываем CryptoBot для оплаты
+            tg.openTelegramLink(data.pay_url);
+            closeCryptoModal();
+            showToast('Переход к оплате...');
+        }
+    })
+    .catch(err => {
+        showToast('Ошибка создания счёта');
+        console.error(err);
+    });
+    */
     
-    // Отправляем данные боту
-    tg.sendData(JSON.stringify(dataToSend));
+    // Для демо - показываем что делать
+    console.log('CryptoBot Invoice Data:', invoiceData);
     
-    // Mini App закроется автоматически после sendData
+    // Отправляем данные боту для создания инвойса
+    tg.sendData(JSON.stringify({
+        action: 'create_crypto_invoice',
+        ...invoiceData
+    }));
+    
+    closeCryptoModal();
+    showToast('Запрос отправлен боту');
 }
+
 // ========================================
 // ORDER COMPLETION
 // ========================================
@@ -638,4 +692,3 @@ document.getElementById('backBtn').addEventListener('click', function() {
 window.removeFromCart = removeFromCart;
 
 console.log('Script loaded!');
-
